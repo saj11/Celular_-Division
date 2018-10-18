@@ -46,7 +46,12 @@ class Controller:
     
     @property
     def list_images(self):
-        return self._list_files(self._project_path+os.path.abspath(self._folder))
+        #print("voy por aqui suma de paths")
+        #print(self._project_path)
+        #word = os.path.abspath(self._folder)
+        #print(word.split(':')[1])
+        print (os.path.abspath(self._folder))
+        return os.path.abspath(self._folder)
     
     @list_images.setter
     def list_images(self, list_images):

@@ -23,6 +23,7 @@ from keras.models import Model
 from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose
 from keras.optimizers import Adam
 from keras import backend as K
+from _cffi_backend import string
 
 #Set channel configuration for backend
 K.set_image_data_format('channels_last')
@@ -46,10 +47,14 @@ def dice_coef(y_true, y_pred):
 
 #Loss function
 def dice_coef_loss(y_true, y_pred):
+    if not isinstance(y_true, float) and isinstance(y_pred, float): 
+        raise TypeError("The variables have to be floats")
     return -dice_coef(y_true, y_pred)
 
 #Load test data from directory
 def load_test_data(image_path):
+    if not isinstance(image_path, str): 
+        raise TypeError("The variables have to be a path")
     raw = []
     image_filename = dict()
     count = 0
@@ -69,6 +74,7 @@ def load_test_data(image_path):
 
 #Preprocess loaded images
 def preprocess(imgs):
+    print(imgs)
     imgs_p = np.ndarray((len(imgs), img_rows, img_cols), dtype=np.float32)
     for i in range(len(imgs)):
         imgs_p[i] = imgs[i].reshape((img_rows, img_cols))/255.

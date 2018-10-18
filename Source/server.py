@@ -28,8 +28,17 @@ def upload():
     for upload in request.files.getlist("file"):    #Loop through all the images to be uploaded
         #print("{} is the file name".format(upload.filename))
         filename = upload.filename
+        print(filename)
+        print(filename.split('/'))
+        part1= filename.split('/')[0] 
+        part2= filename.split('/')[1]
+        print("nombre archivo")
+        print(part1+"\\"+part2)
+        filename2= part2
+        print(filename2)
         if filename:    #Validate if there are no images to be upload
-            destination = "/".join([controller.images_path[:-1], filename])
+            print("/".join(controller.images_path[:]))
+            destination = "/".join([controller.images_path[:], filename2])
             if filename not in controller.list_images and filename != ".DS_Store": #Validate if the image to be upload is not uploaded yet
                 upload.save(destination)
                 controller.create_Image(destination[destination.rfind("/")+1:])
