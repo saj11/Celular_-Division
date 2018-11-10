@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import unittest
 from LoadImages import Image
@@ -11,25 +14,28 @@ from Cython.Compiler.Errors import message
 
 
 class TestSegmentation(unittest.TestCase):
-    
-    
-    def testLossfunction(self):
-        #dice_coef_loss("y_true", "y_pred")
-        #assert TypeError , "The function can receive strings"
-        self.assertRaises(TypeError,dice_coef_loss(1.4, 12.4))
+
+    # Test for the dice_coef_loss receive an strings instead of ints
+
+    def testDice_coef_loss(self):
+        self.assertRaises(TypeError, dice_coef_loss('test', 'test2'))
+
+    # Test for the Load_test_data receive an int instead of a str
 
     def testLoad_test_data(self):
-        self.assertRaises(TypeError,load_test_data("adafa"))
+        self.assertRaises(TypeError, load_test_data(1031))
+
+    # Test for the preprocess receive a str instead of a list
 
     def testPreprocess(self):
-        self.assertRaises(TypeError,preprocess(10.0))
-    
-    
+        self.assertRaises(TypeError, preprocess('test'))
+
+    # Test for the Load_test_data receive an incorrect path
+
+    def testLoad_test_data_Wrong_Path(self):
+        self.assertRaises(TypeError,
+                          load_test_data('Celular_Division\Source'))
 
 
-
-
-
-if __name__ == "__main__":
-    unittest.main() # run all tests
-
+if __name__ == '__main__':
+    unittest.main()  # run all tests
