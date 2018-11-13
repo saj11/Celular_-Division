@@ -31,7 +31,7 @@ class Controller:
         
     def create_folder(self):
         print(self._folder)
-        self._images_path = self._project_path+self._folder
+        self._images_path = self._project_path+"\\Resources\images\\"
         #print("IP: "+self._images_path)
         if not os.path.isdir(self._images_path):   #Search if there is a directory to save images uploaded
             print(os.mkdir(self._images_path))
@@ -44,20 +44,14 @@ class Controller:
     
     def create_Image(self, img):
         image = Image(self._images_path, img)
-        print("Create Image")
-        print(image)
         self._list_images.append(image)
     
     @property
     def images_path(self):
-        print("Images_path")
-        print(self._images_path)
         return self._images_path
     
     @property
     def list_images(self):
-        print("list_images")
-        print(os.path.abspath(self._folder))
         #return self._list_files(self._project_path+os.path.abspath(self._folder))
         return os.path.abspath(self._folder)
     

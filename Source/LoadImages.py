@@ -14,12 +14,12 @@ class Image:
     ## The constructor.
     #  @param self The object pointer.
     #  @param name The image name to be load.
-    def __init__(self, path, name = "\\imagen"):
+    def __init__(self, path, name = "/imagen"):
         self._path = path
         print("load image")
         print(name)
         try:
-            print("IM: "+self._path+name)
+            print("IM: "+name)
             self._img = cv2.imread(self._path+name)
             self._name = name
         except:
