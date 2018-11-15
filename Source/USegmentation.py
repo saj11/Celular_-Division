@@ -18,6 +18,7 @@ import time
 import numpy as np
 
 from PIL import Image
+import cv2
 import glob
 from keras.models import Model
 from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose
@@ -168,9 +169,41 @@ def predict():
     print('-' * 30)
     if not os.path.exists(pred_dir):
         os.mkdir(pred_dir)
+        
+    result = {}
     #Save predictions as images
     for image_pred,index in zip(imgs_mask_predict,range(x_test.shape[0])):
         image_pred = image_pred[:, :, 0]
         image_pred[image_pred > 0.5] *= 255.
         im = Image.fromarray(image_pred.astype(np.uint8))
         im.save(os.path.join(pred_dir, str(test_id[index]) + '_pred.png'))
+        
+        count = 0
+        temp = []
+        im2 = cv2.imread(os.path.join(pred_dir, str(test_id[index]) + '_pred.png'))
+        imgray = cv2.cvtColor(im2,cv2.COLOR_BGR2GRAY)
+        gray = cv2.bilateralFilter(imgray, 11, 17, 17)
+        edged = cv2.Canny(imgray, 30, 200)
+        
+        _, cnts, _ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = sorted(cnts, key = cv2.contourArea, reverse = True)
+        for c in cnts:
+            # approximate the contour
+            try:
+                peri = cv2.arcLength(c, True)
+                approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+            
+                M = cv2.moments(c)
+                cX = int(M["m10"] / M["m00"])
+                cY = int(M["m01"] / M["m00"])
+            
+                cv2.circle(im2, (cX, cY), 3, (0, 0, 0), -1)
+                cv2.drawContours(im2, [approx], -1, (0, 255, 0), 1)
+            except:
+                continue
+            temp.append([count, (cX, cY), M['m00']])
+            count += 1
+        result[index] = temp
+        cv2.imwrite(os.path.join(pred_dir, str(test_id[index]) + '_pred_final.png'),im2)
+    
+    return result 

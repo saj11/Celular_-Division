@@ -4,6 +4,7 @@ import Cleaner
 from LoadImages import Image
 from LoadCSV import CSV
 import USegmentation
+import csv
 from email._header_value_parser import _fold_as_ew
 
 
@@ -13,8 +14,10 @@ class Controller:
     def __init__(self):
         if(str(system()) == "Windows"):
             _folder = "\\Resources\images\\"
+            self._folder_csv = "\\Resources\\csv\\"
         else:
             _folder = "/Resources/images/"
+            self._folder_csv = "/Resources/csv/"
         #print(os.path.abspath(_folder))
         print("Controller")
         self._project_path = os.path.dirname(os.path.abspath(__file__))
@@ -25,9 +28,23 @@ class Controller:
         
     def process_images(self):
         try:
-            USegmentation.predict()
+            result = USegmentation.predict()
+            try:
+                self.create_csv(self._project_path + self._folder_csv, result)
+            except:
+                print("Error while creating the report")
         except:
             print("Error while processing the images")
+        
+    def create_csv(self, path, dict_to_write):
+        with open(path + 'report.csv', 'w', newline='') as csvfile:
+            filewriter = csv.writer(csvfile, delimiter=',',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            filewriter.writerow(['Number of Cell', 'Center Position(X-Y)', 'Area'])
+            for number_image,list_of_cells in dict_to_write.items():
+                filewriter.writerow(['Image #{}'.format(number_image)])
+                for cell in list_of_cells:
+                    filewriter.writerow([cell[0], str(cell[1][0])+"-"+str(cell[1][1]), cell[2]])
         
     def create_folder(self):
         print(self._folder)
